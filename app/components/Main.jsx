@@ -1,6 +1,7 @@
 import React from 'react';
 import Navigation from 'Navigation';
 import { Panel, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 export default class Main extends React.Component {
   constructor(props) {
@@ -9,6 +10,16 @@ export default class Main extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    axios.get('/api/example')
+      .then((res) => {
+        console.log(res, '************** res');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   handleChange(e) {
