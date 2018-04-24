@@ -34,7 +34,7 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
     alias: {
       applicationStyles: path.resolve('./app/styles/app.scss'),
-      Main: path.resolve('./app/components/Main.jsx'),
+      Login: path.resolve('./app/components/Login.jsx'),
       Navigation: path.resolve('./app/components/Navigation.jsx')
     }
   },

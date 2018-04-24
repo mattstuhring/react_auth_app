@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config({ silent: true });
+
 const express = require('express');
 const path = require('path');
 const PORT = 3000;
@@ -8,7 +10,7 @@ const PORT = 3000;
 const bodyParser = require('body-parser');
 
 // ROUTES GO HERE
-const example = require('./routes/example');
+const login = require('./routes/login');
 
 const app = express();
 
@@ -18,7 +20,7 @@ app.use(express.static('public'));
 
 app.use(bodyParser.json());
 
-app.use('/api', example);
+app.use('/api', login);
 
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

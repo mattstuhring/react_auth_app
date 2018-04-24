@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 import { Route, Router, IndexRoute, hashHistory } from 'react-router';
-import Main from 'Main';
+import Login from 'Login';
 
 // Load Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +11,7 @@ import 'style-loader!css-loader!sass-loader!applicationStyles';
 
 ReactDOM.render(
   <Router history={hashHistory}>
-    <Route path="/" component={Main}>
+    <Route path="/" component={Login}>
       {/* <Route path="about" component={About}/> */}
 
     </Route>

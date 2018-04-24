@@ -22593,9 +22593,9 @@ module.exports = __webpack_require__.p + "f4769f9bdb7466be65088239c12046d1.eot";
 
 var _reactRouter = __webpack_require__(526);
 
-var _Main = __webpack_require__(265);
+var _Login = __webpack_require__(265);
 
-var _Main2 = _interopRequireDefault(_Main);
+var _Login2 = _interopRequireDefault(_Login);
 
 __webpack_require__(547);
 
@@ -22615,7 +22615,7 @@ var ReactDOM = __webpack_require__(21);
 ReactDOM.render(React.createElement(
   _reactRouter.Router,
   { history: _reactRouter.hashHistory },
-  React.createElement(_reactRouter.Route, { path: '/', component: _Main2.default })
+  React.createElement(_reactRouter.Route, { path: '/', component: _Login2.default })
 ), document.getElementById('app'));
 
 /***/ }),
@@ -23516,27 +23516,34 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Main = function (_React$Component) {
-  _inherits(Main, _React$Component);
+var Login = function (_React$Component) {
+  _inherits(Login, _React$Component);
 
-  function Main(props) {
-    _classCallCheck(this, Main);
+  function Login(props) {
+    _classCallCheck(this, Login);
 
-    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+
+    _this.state = {
+      email: '',
+      password: ''
+    };
 
     _this.handleChange = _this.handleChange.bind(_this);
-    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.handleSubmitLogin = _this.handleSubmitLogin.bind(_this);
     return _this;
   }
 
-  _createClass(Main, [{
+  _createClass(Login, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      _axios2.default.get('/api/example').then(function (res) {
-        console.log(res, '************** res');
-      }).catch(function (err) {
-        console.log(err);
-      });
+      // axios.get('/api/login')
+      //   .then((res) => {
+      //     console.log(res, '************** res');
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
   }, {
     key: 'handleChange',
@@ -23544,9 +23551,27 @@ var Main = function (_React$Component) {
       this.setState(_defineProperty({}, e.target.name, e.target.value));
     }
   }, {
-    key: 'handleSubmit',
-    value: function handleSubmit(event) {
+    key: 'handleSubmitLogin',
+    value: function handleSubmitLogin(event) {
+      var _this2 = this;
+
       event.preventDefault();
+
+      var user = {
+        email: this.state.email,
+        password: this.state.password
+      };
+
+      _axios2.default.post('/api/login', user).then(function (res) {
+        console.log(res, '************* res');
+
+        _this2.setState({
+          email: '',
+          password: ''
+        });
+      }).catch(function (err) {
+        console.log(err);
+      });
     }
   }, {
     key: 'render',
@@ -23581,7 +23606,7 @@ var Main = function (_React$Component) {
                   null,
                   _react2.default.createElement(
                     'form',
-                    { onSubmit: this.handleSubmit },
+                    { onSubmit: this.handleSubmitLogin },
                     _react2.default.createElement(
                       _reactBootstrap.FormGroup,
                       { controlId: 'formControlsEmail' },
@@ -23592,6 +23617,7 @@ var Main = function (_React$Component) {
                       ),
                       _react2.default.createElement(_reactBootstrap.FormControl, {
                         name: 'email',
+                        value: this.state.email,
                         type: 'email',
                         placeholder: 'Enter email',
                         onChange: this.handleChange
@@ -23607,6 +23633,7 @@ var Main = function (_React$Component) {
                       ),
                       _react2.default.createElement(_reactBootstrap.FormControl, {
                         name: 'password',
+                        value: this.state.password,
                         type: 'password',
                         placeholder: 'Enter password',
                         onChange: this.handleChange
@@ -23627,10 +23654,10 @@ var Main = function (_React$Component) {
     }
   }]);
 
-  return Main;
+  return Login;
 }(_react2.default.Component);
 
-exports.default = Main;
+exports.default = Login;
 
 /***/ }),
 /* 266 */
