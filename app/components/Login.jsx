@@ -2,12 +2,14 @@ import React from 'react';
 import Navigation from 'Navigation';
 import { Panel, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 import axios from 'axios';
+import decode from 'jwt-decode';
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      user: '',
       email: '',
       password: ''
     }
@@ -17,13 +19,7 @@ export default class Login extends React.Component {
   }
 
   componentDidMount() {
-    // axios.get('/api/login')
-    //   .then((res) => {
-    //     console.log(res, '************** res');
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+
   }
 
   handleChange(e) {
@@ -32,17 +28,18 @@ export default class Login extends React.Component {
     });
   }
 
+
   handleSubmitLogin(event) {
     event.preventDefault();
 
     const user = {
       email: this.state.email,
       password: this.state.password
-    }
+    };
 
     axios.post('/api/login', user)
       .then((res) => {
-        console.log(res, '************* res');
+        localStorage.setItem('id_token', res.data);
 
         this.setState({
           email: '',
@@ -52,7 +49,6 @@ export default class Login extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-
   }
 
   render() {

@@ -23506,6 +23506,10 @@ var _axios = __webpack_require__(247);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _jwtDecode = __webpack_require__(559);
+
+var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -23525,6 +23529,7 @@ var Login = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
 
     _this.state = {
+      user: '',
       email: '',
       password: ''
     };
@@ -23536,15 +23541,7 @@ var Login = function (_React$Component) {
 
   _createClass(Login, [{
     key: 'componentDidMount',
-    value: function componentDidMount() {
-      // axios.get('/api/login')
-      //   .then((res) => {
-      //     console.log(res, '************** res');
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-    }
+    value: function componentDidMount() {}
   }, {
     key: 'handleChange',
     value: function handleChange(e) {
@@ -23563,7 +23560,7 @@ var Login = function (_React$Component) {
       };
 
       _axios2.default.post('/api/login', user).then(function (res) {
-        console.log(res, '************* res');
+        localStorage.setItem('id_token', res.data);
 
         _this2.setState({
           email: '',
@@ -23678,6 +23675,12 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactBootstrap = __webpack_require__(202);
 
+var _reactRouter = __webpack_require__(526);
+
+var _jwtDecode = __webpack_require__(559);
+
+var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23692,12 +23695,89 @@ var Navigation = function (_React$Component) {
   function Navigation(props) {
     _classCallCheck(this, Navigation);
 
-    return _possibleConstructorReturn(this, (Navigation.__proto__ || Object.getPrototypeOf(Navigation)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Navigation.__proto__ || Object.getPrototypeOf(Navigation)).call(this, props));
+
+    _this.state = {
+      user: null
+    };
+
+    _this.getToken = _this.getToken.bind(_this);
+    _this.getProfile = _this.getProfile.bind(_this);
+    _this.logout = _this.logout.bind(_this);
+    return _this;
   }
 
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log(prevState, '********* prev state');
+  //   console.log(this.getProfile(), '********* get profile');
+  // }
+
   _createClass(Navigation, [{
+    key: 'getProfile',
+    value: function getProfile() {
+      // Using jwt-decode npm package to decode the token
+      return (0, _jwtDecode2.default)(this.getToken());
+    }
+  }, {
+    key: 'getToken',
+    value: function getToken() {
+      // Retrieves the user token from localStorage
+      return localStorage.getItem('id_token');
+    }
+  }, {
+    key: 'logout',
+    value: function logout() {
+      // Clear user token and profile data from localStorage
+      localStorage.removeItem('id_token');
+      _reactRouter.browserHistory.push('/login');
+
+      this.setState({
+        user: null
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
+      var checkUserLogin = function checkUserLogin() {
+        if (_this2.getToken()) {
+          var user = _this2.getProfile();
+
+          return _react2.default.createElement(
+            'span',
+            null,
+            _react2.default.createElement(
+              _reactBootstrap.Nav,
+              { pullRight: true },
+              _react2.default.createElement(
+                _reactBootstrap.NavItem,
+                { eventKey: 1, href: '#', onClick: function onClick() {
+                    _this2.logout();
+                  } },
+                'LOGOUT'
+              )
+            ),
+            _react2.default.createElement(
+              _reactBootstrap.Navbar.Text,
+              { pullRight: true },
+              'Logged in as: ',
+              _react2.default.createElement(
+                _reactBootstrap.Navbar.Link,
+                { href: '#' },
+                user.email
+              )
+            )
+          );
+        } else {
+          return _react2.default.createElement(
+            _reactBootstrap.Navbar.Text,
+            { pullRight: true },
+            'Welcome, please login!'
+          );
+        }
+      };
+
       return _react2.default.createElement(
         'div',
         null,
@@ -23716,6 +23796,11 @@ var Navigation = function (_React$Component) {
                 'React Auth'
               )
             )
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Navbar.Collapse,
+            null,
+            checkUserLogin()
           )
         )
       );
@@ -50135,6 +50220,122 @@ module.exports = __webpack_require__.p + "448c34a56d699c29117adc64c43affeb.woff2
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(246);
+
+
+/***/ }),
+/* 557 */
+/***/ (function(module, exports) {
+
+/**
+ * The code was extracted from:
+ * https://github.com/davidchambers/Base64.js
+ */
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function InvalidCharacterError(message) {
+  this.message = message;
+}
+
+InvalidCharacterError.prototype = new Error();
+InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+function polyfill (input) {
+  var str = String(input).replace(/=+$/, '');
+  if (str.length % 4 == 1) {
+    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+  }
+  for (
+    // initialize result and counters
+    var bc = 0, bs, buffer, idx = 0, output = '';
+    // get next character
+    buffer = str.charAt(idx++);
+    // character found in table? initialize bit storage and add its ascii value;
+    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+      // and if not first of each 4 characters,
+      // convert the first 8 bits to one ascii character
+      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+  ) {
+    // try to find character in table (0-63, not found => -1)
+    buffer = chars.indexOf(buffer);
+  }
+  return output;
+}
+
+
+module.exports = typeof window !== 'undefined' && window.atob && window.atob.bind(window) || polyfill;
+
+
+/***/ }),
+/* 558 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var atob = __webpack_require__(557);
+
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
+    var code = p.charCodeAt(0).toString(16).toUpperCase();
+    if (code.length < 2) {
+      code = '0' + code;
+    }
+    return '%' + code;
+  }));
+}
+
+module.exports = function(str) {
+  var output = str.replace(/-/g, "+").replace(/_/g, "/");
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += "==";
+      break;
+    case 3:
+      output += "=";
+      break;
+    default:
+      throw "Illegal base64url string!";
+  }
+
+  try{
+    return b64DecodeUnicode(output);
+  } catch (err) {
+    return atob(output);
+  }
+};
+
+
+/***/ }),
+/* 559 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var base64_url_decode = __webpack_require__(558);
+
+function InvalidTokenError(message) {
+  this.message = message;
+}
+
+InvalidTokenError.prototype = new Error();
+InvalidTokenError.prototype.name = 'InvalidTokenError';
+
+module.exports = function (token,options) {
+  if (typeof token !== 'string') {
+    throw new InvalidTokenError('Invalid token specified');
+  }
+
+  options = options || {};
+  var pos = options.header === true ? 0 : 1;
+  try {
+    return JSON.parse(base64_url_decode(token.split('.')[pos]));
+  } catch (e) {
+    throw new InvalidTokenError('Invalid token specified: ' + e.message);
+  }
+};
+
+module.exports.InvalidTokenError = InvalidTokenError;
 
 
 /***/ })
