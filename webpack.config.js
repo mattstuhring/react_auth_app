@@ -35,7 +35,9 @@ module.exports = {
     alias: {
       applicationStyles: path.resolve('./app/styles/app.scss'),
       Login: path.resolve('./app/components/Login.jsx'),
-      Navigation: path.resolve('./app/components/Navigation.jsx')
+      Navigation: path.resolve('./app/components/Navigation.jsx'),
+      Main: path.resolve('./app/components/Main.jsx'),
+      Success: path.resolve('./app/components/Success.jsx')
     }
   },
 };

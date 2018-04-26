@@ -16,26 +16,20 @@ export default class Navigation extends React.Component {
     this.logout = this.logout.bind(this);
   }
 
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log(prevState, '********* prev state');
-  //   console.log(this.getProfile(), '********* get profile');
-  // }
-
   getProfile() {
-    // Using jwt-decode npm package to decode the token
+    // Decode the token from localStorage
     return decode(this.getToken());
   }
 
   getToken() {
     // Retrieves the user token from localStorage
-    return localStorage.getItem('id_token')
+    return localStorage.getItem('id_token');
   }
 
   logout() {
-    // Clear user token and profile data from localStorage
+    // Clear token from localStorage
     localStorage.removeItem('id_token');
-    browserHistory.push('/login');
+    browserHistory.push('/');
 
     this.setState({
       user: null
@@ -62,7 +56,7 @@ export default class Navigation extends React.Component {
       } else {
         return <Navbar.Text pullRight>
           Welcome, please login!
-        </Navbar.Text>
+        </Navbar.Text>;
       }
     };
 
