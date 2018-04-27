@@ -3,6 +3,7 @@ import { Panel, FormGroup, ControlLabel, FormControl, Button } from 'react-boots
 import axios from 'axios';
 import decode from 'jwt-decode';
 import { browserHistory } from 'react-router';
+import AuthService from 'AuthService';
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -16,37 +17,15 @@ export default class Login extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
-    this.loggedIn = this.loggedIn.bind(this);
-    this.isTokenExpired = this.isTokenExpired.bind(this);
+    this.Auth = new AuthService();
   }
 
   componentWillMount() {
-    if (!this.loggedIn()) {
+    if (!this.Auth.loggedIn()) {
       browserHistory.push('/');
     }
     else {
       browserHistory.push('/success');
-    }
-  }
-
-  loggedIn() {
-    // Checks if there is a saved token and it's still valid
-    const token = localStorage.getItem('id_token'); // Getting token from localstorage
-    return token && !this.isTokenExpired(token); // handwaiving here
-  }
-
-  isTokenExpired(token) {
-    try {
-      const decoded = decode(token);
-      if (decoded.exp < Date.now() / 1000) { // Checking if token is expired. N
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    catch (err) {
-      return false;
     }
   }
 
@@ -67,7 +46,7 @@ export default class Login extends React.Component {
 
     axios.post('/api/login', user)
       .then((res) => {
-        localStorage.setItem('id_token', res.data);
+        this.Auth.setToken(res.data);
 
         this.setState({
           email: '',

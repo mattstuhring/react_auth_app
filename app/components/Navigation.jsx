@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Nav, NavItem, Button } from 'react-bootstrap';
 import { browserHistory } from 'react-router';
 import decode from 'jwt-decode';
+import AuthService from 'AuthService';
 
 export default class Navigation extends React.Component {
   constructor(props) {
@@ -12,24 +13,14 @@ export default class Navigation extends React.Component {
       message: 'Please login!'
     }
 
-    this.getToken = this.getToken.bind(this);
-    this.getProfile = this.getProfile.bind(this);
-    this.logout = this.logout.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
+    this.Auth = new AuthService();
   }
 
-  getProfile() {
-    // Decode the token from localStorage
-    return decode(this.getToken());
-  }
-
-  getToken() {
-    // Retrieves the user token from localStorage
-    return localStorage.getItem('id_token');
-  }
-
-  logout() {
+  handleLogout() {
     // Clear token from localStorage
-    localStorage.removeItem('id_token');
+    this.Auth.logout();
+
     browserHistory.push('/');
 
     this.setState({
@@ -42,12 +33,12 @@ export default class Navigation extends React.Component {
   render() {
 
     const checkUserLogin = () => {
-      if (this.getToken()) {
-        let user = this.getProfile();
+      if (this.Auth.getToken()) {
+        let user = this.Auth.getProfile();
 
         return <span>
           <Nav pullRight>
-            <NavItem eventKey={1} href="#" onClick={() => {this.logout()}}>
+            <NavItem eventKey={1} href="#" onClick={() => {this.handleLogout()}}>
               LOGOUT
             </NavItem>
           </Nav>
