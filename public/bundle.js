@@ -23716,6 +23716,10 @@ var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
 
 var _reactRouter = __webpack_require__(95);
 
+var _AuthService = __webpack_require__(562);
+
+var _AuthService2 = _interopRequireDefault(_AuthService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -23742,40 +23746,17 @@ var Login = function (_React$Component) {
 
     _this.handleChange = _this.handleChange.bind(_this);
     _this.handleSubmitLogin = _this.handleSubmitLogin.bind(_this);
-    _this.loggedIn = _this.loggedIn.bind(_this);
-    _this.isTokenExpired = _this.isTokenExpired.bind(_this);
+    _this.Auth = new _AuthService2.default();
     return _this;
   }
 
   _createClass(Login, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      if (!this.loggedIn()) {
+      if (!this.Auth.loggedIn()) {
         _reactRouter.browserHistory.push('/');
       } else {
         _reactRouter.browserHistory.push('/success');
-      }
-    }
-  }, {
-    key: 'loggedIn',
-    value: function loggedIn() {
-      // Checks if there is a saved token and it's still valid
-      var token = localStorage.getItem('id_token'); // Getting token from localstorage
-      return token && !this.isTokenExpired(token); // handwaiving here
-    }
-  }, {
-    key: 'isTokenExpired',
-    value: function isTokenExpired(token) {
-      try {
-        var decoded = (0, _jwtDecode2.default)(token);
-        if (decoded.exp < Date.now() / 1000) {
-          // Checking if token is expired. N
-          return true;
-        } else {
-          return false;
-        }
-      } catch (err) {
-        return false;
       }
     }
   }, {
@@ -23796,7 +23777,7 @@ var Login = function (_React$Component) {
       };
 
       _axios2.default.post('/api/login', user).then(function (res) {
-        localStorage.setItem('id_token', res.data);
+        _this2.Auth.setToken(res.data);
 
         _this2.setState({
           email: '',
@@ -23981,6 +23962,10 @@ var _jwtDecode = __webpack_require__(121);
 
 var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
 
+var _AuthService = __webpack_require__(562);
+
+var _AuthService2 = _interopRequireDefault(_AuthService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24002,29 +23987,17 @@ var Navigation = function (_React$Component) {
       message: 'Please login!'
     };
 
-    _this.getToken = _this.getToken.bind(_this);
-    _this.getProfile = _this.getProfile.bind(_this);
-    _this.logout = _this.logout.bind(_this);
+    _this.handleLogout = _this.handleLogout.bind(_this);
+    _this.Auth = new _AuthService2.default();
     return _this;
   }
 
   _createClass(Navigation, [{
-    key: 'getProfile',
-    value: function getProfile() {
-      // Decode the token from localStorage
-      return (0, _jwtDecode2.default)(this.getToken());
-    }
-  }, {
-    key: 'getToken',
-    value: function getToken() {
-      // Retrieves the user token from localStorage
-      return localStorage.getItem('id_token');
-    }
-  }, {
-    key: 'logout',
-    value: function logout() {
+    key: 'handleLogout',
+    value: function handleLogout() {
       // Clear token from localStorage
-      localStorage.removeItem('id_token');
+      this.Auth.logout();
+
       _reactRouter.browserHistory.push('/');
 
       this.setState({
@@ -24038,8 +24011,8 @@ var Navigation = function (_React$Component) {
       var _this2 = this;
 
       var checkUserLogin = function checkUserLogin() {
-        if (_this2.getToken()) {
-          var user = _this2.getProfile();
+        if (_this2.Auth.getToken()) {
+          var user = _this2.Auth.getProfile();
 
           return _react2.default.createElement(
             'span',
@@ -24050,7 +24023,7 @@ var Navigation = function (_React$Component) {
               _react2.default.createElement(
                 _reactBootstrap.NavItem,
                 { eventKey: 1, href: '#', onClick: function onClick() {
-                    _this2.logout();
+                    _this2.handleLogout();
                   } },
                 'LOGOUT'
               )
@@ -24132,6 +24105,10 @@ var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
 
 var _reactRouter = __webpack_require__(95);
 
+var _AuthService = __webpack_require__(562);
+
+var _AuthService2 = _interopRequireDefault(_AuthService);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24150,38 +24127,15 @@ var Success = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Success.__proto__ || Object.getPrototypeOf(Success)).call(this, props));
 
-    _this.loggedIn = _this.loggedIn.bind(_this);
-    _this.isTokenExpired = _this.isTokenExpired.bind(_this);
+    _this.Auth = new _AuthService2.default();
     return _this;
   }
 
   _createClass(Success, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      if (!this.loggedIn()) {
+      if (!this.Auth.loggedIn()) {
         _reactRouter.browserHistory.push('/');
-      }
-    }
-  }, {
-    key: 'loggedIn',
-    value: function loggedIn() {
-      // Checks if there is a saved token and it's still valid
-      var token = localStorage.getItem('id_token'); // Getting token from localstorage
-      return token && !this.isTokenExpired(token); // handwaiving here
-    }
-  }, {
-    key: 'isTokenExpired',
-    value: function isTokenExpired(token) {
-      try {
-        var decoded = (0, _jwtDecode2.default)(token);
-        if (decoded.exp < Date.now() / 1000) {
-          // Checking if token is expired. N
-          return true;
-        } else {
-          return false;
-        }
-      } catch (err) {
-        return false;
       }
     }
   }, {
@@ -50538,6 +50492,92 @@ module.exports = __webpack_require__.p + "448c34a56d699c29117adc64c43affeb.woff2
 
 module.exports = __webpack_require__(248);
 
+
+/***/ }),
+/* 562 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jwtDecode = __webpack_require__(121);
+
+var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AuthService = function () {
+  // Initializing important variables
+  function AuthService() {
+    _classCallCheck(this, AuthService);
+
+    this.getProfile = this.getProfile.bind(this);
+    this.getToken = this.getToken.bind(this);
+    this.loggedIn = this.loggedIn.bind(this);
+    this.logout = this.logout.bind(this);
+    this.isTokenExpired = this.isTokenExpired.bind(this);
+  }
+
+  _createClass(AuthService, [{
+    key: 'getProfile',
+    value: function getProfile() {
+      // Decode the token from localStorage
+      return (0, _jwtDecode2.default)(this.getToken());
+    }
+  }, {
+    key: 'getToken',
+    value: function getToken() {
+      // Retrieves the user token from localStorage
+      return localStorage.getItem('id_token');
+    }
+  }, {
+    key: 'setToken',
+    value: function setToken(idToken) {
+      // Saves user token to localStorage
+      return localStorage.setItem('id_token', idToken);
+    }
+  }, {
+    key: 'loggedIn',
+    value: function loggedIn() {
+      // Checks if there is a saved token and it's still valid
+      var token = localStorage.getItem('id_token'); // Getting token from localstorage
+      return token && !this.isTokenExpired(token); // handwaiving here
+    }
+  }, {
+    key: 'logout',
+    value: function logout() {
+      // Clear token from localStorage
+      return localStorage.removeItem('id_token');
+    }
+  }, {
+    key: 'isTokenExpired',
+    value: function isTokenExpired(token) {
+      try {
+        var decoded = (0, _jwtDecode2.default)(token);
+        if (decoded.exp < Date.now() / 1000) {
+          // Checking if token is expired. N
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+  }]);
+
+  return AuthService;
+}();
+
+exports.default = AuthService;
 
 /***/ })
 /******/ ]);
