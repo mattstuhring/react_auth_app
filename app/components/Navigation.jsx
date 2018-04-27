@@ -8,7 +8,8 @@ export default class Navigation extends React.Component {
     super(props);
 
     this.state = {
-      user: null
+      user: null,
+      message: 'Please login!'
     }
 
     this.getToken = this.getToken.bind(this);
@@ -32,7 +33,8 @@ export default class Navigation extends React.Component {
     browserHistory.push('/');
 
     this.setState({
-      user: null
+      user: null,
+      message: 'Logout successful!'
     });
   }
 
@@ -49,13 +51,13 @@ export default class Navigation extends React.Component {
               LOGOUT
             </NavItem>
           </Nav>
-          <Navbar.Text pullRight>
-            Logged in as: <Navbar.Link href="#">{user.email}</Navbar.Link>
+          <Navbar.Text>
+            Welcome, <Navbar.Link href="#">{user.email}</Navbar.Link>
           </Navbar.Text>
         </span>;
       } else {
         return <Navbar.Text pullRight>
-          Welcome, please login!
+          {this.state.message}
         </Navbar.Text>;
       }
     };

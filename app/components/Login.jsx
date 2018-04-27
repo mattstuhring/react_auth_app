@@ -22,11 +22,9 @@ export default class Login extends React.Component {
 
   componentWillMount() {
     if (!this.loggedIn()) {
-      console.log('are we here');
       browserHistory.push('/');
     }
     else {
-      console.log('i guess not');
       browserHistory.push('/success');
     }
   }

@@ -23751,10 +23751,8 @@ var Login = function (_React$Component) {
     key: 'componentWillMount',
     value: function componentWillMount() {
       if (!this.loggedIn()) {
-        console.log('are we here');
         _reactRouter.browserHistory.push('/');
       } else {
-        console.log('i guess not');
         _reactRouter.browserHistory.push('/success');
       }
     }
@@ -24000,7 +23998,8 @@ var Navigation = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Navigation.__proto__ || Object.getPrototypeOf(Navigation)).call(this, props));
 
     _this.state = {
-      user: null
+      user: null,
+      message: 'Please login!'
     };
 
     _this.getToken = _this.getToken.bind(_this);
@@ -24029,7 +24028,8 @@ var Navigation = function (_React$Component) {
       _reactRouter.browserHistory.push('/');
 
       this.setState({
-        user: null
+        user: null,
+        message: 'Logout successful!'
       });
     }
   }, {
@@ -24057,8 +24057,8 @@ var Navigation = function (_React$Component) {
             ),
             _react2.default.createElement(
               _reactBootstrap.Navbar.Text,
-              { pullRight: true },
-              'Logged in as: ',
+              null,
+              'Welcome, ',
               _react2.default.createElement(
                 _reactBootstrap.Navbar.Link,
                 { href: '#' },
@@ -24070,7 +24070,7 @@ var Navigation = function (_React$Component) {
           return _react2.default.createElement(
             _reactBootstrap.Navbar.Text,
             { pullRight: true },
-            'Welcome, please login!'
+            _this2.state.message
           );
         }
       };
@@ -24126,6 +24126,12 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _jwtDecode = __webpack_require__(182);
+
+var _jwtDecode2 = _interopRequireDefault(_jwtDecode);
+
+var _reactRouter = __webpack_require__(147);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24133,8 +24139,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 // import { Panel, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
+
 
 var Success = function (_React$Component) {
   _inherits(Success, _React$Component);
@@ -24142,22 +24148,55 @@ var Success = function (_React$Component) {
   function Success(props) {
     _classCallCheck(this, Success);
 
-    return _possibleConstructorReturn(this, (Success.__proto__ || Object.getPrototypeOf(Success)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Success.__proto__ || Object.getPrototypeOf(Success)).call(this, props));
+
+    _this.loggedIn = _this.loggedIn.bind(_this);
+    _this.isTokenExpired = _this.isTokenExpired.bind(_this);
+    return _this;
   }
 
   _createClass(Success, [{
-    key: "render",
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      if (!this.loggedIn()) {
+        _reactRouter.browserHistory.push('/');
+      }
+    }
+  }, {
+    key: 'loggedIn',
+    value: function loggedIn() {
+      // Checks if there is a saved token and it's still valid
+      var token = localStorage.getItem('id_token'); // Getting token from localstorage
+      return token && !this.isTokenExpired(token); // handwaiving here
+    }
+  }, {
+    key: 'isTokenExpired',
+    value: function isTokenExpired(token) {
+      try {
+        var decoded = (0, _jwtDecode2.default)(token);
+        if (decoded.exp < Date.now() / 1000) {
+          // Checking if token is expired. N
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+  }, {
+    key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        "div",
-        { className: "success" },
+        'div',
+        { className: 'success' },
         _react2.default.createElement(
-          "div",
-          { className: "row" },
+          'div',
+          { className: 'row' },
           _react2.default.createElement(
-            "div",
-            { className: "col-sm-12 text-center" },
-            "You have logged in successfully!"
+            'div',
+            { className: 'col-sm-12 text-center' },
+            'You have logged in successfully!'
           )
         )
       );
