@@ -64,7 +64,7 @@ export default class Login extends React.Component {
     return (
       <div className="login">
         <div className="row">
-          <div className="col-sm-6 col-sm-offset-3">
+          <div className="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
             <Panel bsStyle="primary">
               <Panel.Heading>
                 <Panel.Title>Login</Panel.Title>
